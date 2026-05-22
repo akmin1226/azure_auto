@@ -1,0 +1,30 @@
+name: Docker Build Push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to ACR
+        run: |
+          docker login ${{ secrets.ACR_LOGIN_SERVER }} \
+          -u ${{ secrets.ACR_USERNAME }} \
+          -p ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build Docker Image
+        run: |
+          docker build -t \
+          ${{ secrets.ACR_LOGIN_SERVER }}/flask-acr-lab:latest .
+
+      - name: Push Docker Image
+        run: |
+          docker push \
+          ${{ secrets.ACR_LOGIN_SERVER }}/flask-acr-lab:latest
